@@ -1,0 +1,16 @@
+.idea/
+*.iml
+target/
+bin/
+.settings/
+.classpath
+.factorypath
+.project
+ibm-web-ext.xml
+**/tomcat/
+*.log
+*.MF
+.project
+transaction-logs/
+*.lck
+logs/
