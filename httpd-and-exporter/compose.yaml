@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  httpd:
+    image: registry.access.redhat.com/ubi9/httpd-24:latest
+    container_name: httpd
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./httpd/conf.d:/etc/httpd/conf.d:Z
+    command: ["/usr/sbin/httpd", "-DFOREGROUND"]
+
+  apache-exporter:
+    image: bitnami/apache-exporter:latest
+    container_name: apache-exporter
+    ports:
+      - "9117:9117"
+    environment:
+      - APACHE_STATUS_URL=http://httpd:8080/server-status?auto
+    depends_on:
+      - httpd
+
+  prometheus:
+    image: registry.redhat.io/openshift4/ose-prometheus:v4.10.0
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./data:/prometheus/data
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    restart: unless-stopped
